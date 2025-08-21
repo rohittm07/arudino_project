@@ -1,0 +1,118 @@
+const int IN1 = 8;
+const int IN2 = 9;
+const int ENA = 10;  // PWM capable pin for Motor 1
+
+// Motor 2 control pins
+const int IN3 = 13;
+const int IN4 = 12;
+const int ENB = 11;  // PWM capable pin for Motor 2
+
+const int speed = 150;
+
+void setup() {
+  // Set motor control pins as output for Motor 1
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(ENA, OUTPUT);
+
+  // Set motor control pins as output for Motor 2
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+  pinMode(ENB, OUTPUT);
+
+  Serial.begin(9600);
+  Serial.println("Enter command: f = forward, b = backward, l = left, r = right, s = stop");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    char command = Serial.read();
+
+    switch (command) {
+      case 'f':
+        Serial.println("Motor Forward");
+        motorForward(speed); // Full speed
+        break;
+
+      case 'b':
+        Serial.println("Motor Backward");
+        motorBackward(speed); // Half speed
+        break;
+
+      case 'r':
+        Serial.println("Turning Left");
+        motorLeft(speed);
+        break;
+
+      case 'l':
+        Serial.println("Turning Right");
+        motorRight(speed);
+        break;
+
+      case 's':
+        Serial.println("Motor Stopped");
+        motorStop();
+        break;
+
+      default:
+        Serial.println("Invalid command. Use f, b, l, r, s.");
+        break;
+    }
+  }
+}
+
+// Function to run both motors forward
+void motorRight(int speed) {
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  analogWrite(ENA, speed);
+
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENB, speed);
+}
+
+// Function to run both motors backward
+void motorLeft(int speed) {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  analogWrite(ENA, speed);
+
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  analogWrite(ENB, speed);
+}
+
+// Function to turn right (Motor 1 forward, Motor 2 backward)
+void motorForward(int speed) {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  analogWrite(ENA, speed);
+
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENB, speed);
+}
+
+// Function to turn left (Motor 1 backward, Motor 2 forward)
+void motorBackward(int speed) {
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  analogWrite(ENA, speed);
+
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  analogWrite(ENB, speed);
+}
+
+// Function to stop both motors
+void motorStop() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  analogWrite(ENA, 0);
+
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENB, 0);
+}
+
