@@ -1,0 +1,100 @@
+   // Motor pins
+const int IN1 = 8;
+const int IN2 = 9;
+const int ENA = 10;
+
+const int IN3 = 13;
+const int IN4 = 12;
+const int ENB = 11;
+
+// IR sensor pins
+const int leftSensor = A0;
+const int rightSensor = A1;
+
+const int motorSpeed = 150; // Change speed between 0-255
+
+void setup() {
+  // Motor pins
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(ENA, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+  pinMode(ENB, OUTPUT);
+
+  // Sensor pins
+  pinMode(leftSensor, INPUT);
+  pinMode(rightSensor, INPUT);
+}
+
+void loop() {
+  int leftState = digitalRead(leftSensor);
+  int rightState = digitalRead(rightSensor);
+
+  // Both sensors on white - move forward
+  if (leftState == LOW && rightState == LOW) {
+    moveForward();
+    delay(50);
+    
+  }
+  // Left sensor on black, right on white - turn right
+  else if (leftState == HIGH && rightState == LOW) {
+    turnRight();
+    delay(50);
+    
+  }
+  // Right sensor on black, left on white - turn left
+  else if (leftState == LOW && rightState == HIGH) {
+    turnLeft();
+    delay(100);
+    
+  }
+  // Both sensors on black - stop
+  else if (leftState == HIGH && rightState == HIGH) {
+    stopMotors();
+    delay(50);
+    
+  }
+}
+
+void moveForward() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  analogWrite(ENA, 100);
+
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENB, 100);
+}
+
+void turnLeft() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  analogWrite(ENA, motorSpeed);
+
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENB, motorSpeed);
+}
+
+void turnRight() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  analogWrite(ENA, motorSpeed);
+
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENB, motorSpeed);
+}
+
+void stopMotors() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  analogWrite(ENA, 0);
+
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENB, 0);
+}
+
+
